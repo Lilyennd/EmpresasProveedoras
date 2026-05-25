@@ -32,11 +32,11 @@ public class EmpresaProveedora {
     @Column(name = "estado", nullable = false, length = 30)
     private String estado;
 
-    public Proveedor() {
+    public EmpresaProveedora() {
     }
 
     // Constructor completo
-    public Proveedor(Long id, String rut, String razonSocial, Integer cantidadAeronaves, Integer cantidadPilotos, String contactoEmail, String estado) {
+    public EmpresaProveedora(Long id, String rut, String razonSocial, Integer cantidadAeronaves, Integer cantidadPilotos, String contactoEmail, String estado) {
         this.id = id;
         this.rut = rut;
         this.razonSocial = razonSocial;
