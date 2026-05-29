@@ -35,7 +35,7 @@ public class EmpresaProveedora {
     public EmpresaProveedora() {
     }
 
-    // Constructor completo
+    
     public EmpresaProveedora(Long id, String rut, String razonSocial, Integer cantidadAeronaves, Integer cantidadPilotos, String contactoEmail, String estado) {
         this.id = id;
         this.rut = rut;
@@ -46,7 +46,7 @@ public class EmpresaProveedora {
         this.estado = estado;
     }
 
-    // Getters y Setters Manuales
+    
     public Long getId() {
         return id;
     }

@@ -13,7 +13,7 @@ import cl.GestionDrones.v1.EmpresasProveedoras.repository.EmpresasProveedorasRep
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmpresaProveedorasService {
+public class EmpresasProveedorasService {
 
     @Autowired
     private EmpresasProveedorasRepository EmpresasProveedorasRepository;

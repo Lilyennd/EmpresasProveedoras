@@ -15,14 +15,14 @@ import java.util.Map;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
-import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresaProveedorasService;
+import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresasProveedorasService;
 
 @RestController
 @RequestMapping("/api/v1/empresas-proveedoras")
 public class EmpresasProveedorasController {
 
     @Autowired
-    private EmpresaProveedorasService empresaProveedorasService;
+    private EmpresasProveedorasService empresaProveedorasService;
 
     @GetMapping
     public ResponseEntity<List<EmpresaProveedora>> getAllEmpresas() {
