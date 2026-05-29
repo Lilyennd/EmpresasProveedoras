@@ -1,0 +1,200 @@
+package cl.GestionDrones.v1.EmpresasProveedoras.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaRequest;
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaRequest;
+import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
+import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresaProveedorasService;
+
+@RestController
+@RequestMapping("/api/empresas-proveedoras")
+public class EmpresasProveedorasController {
+
+    @Autowired
+    private EmpresaProveedorasService empresaProveedorasService;
+
+    @GetMapping
+    public ResponseEntity<List<EmpresaProveedora>> getAllEmpresas() {
+
+        return new ResponseEntity<>(
+                empresaProveedorasService.getEmpresasProveedoras(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEmpresaById(@PathVariable Long id) {
+
+        try {
+
+            EmpresaProveedora empresa =
+                    empresaProveedorasService.getEmpresaProveedoraById(id);
+
+            return new ResponseEntity<>(empresa, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "No encontrado");
+            error.put("mensaje", e.getMessage());
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createEmpresa(
+            @Valid @RequestBody CreateEmpresaRequest request,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+
+            Map<String, String> errores = new HashMap<>();
+
+            result.getFieldErrors().forEach(error ->
+                    errores.put(error.getField(), error.getDefaultMessage())
+            );
+
+            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+
+            EmpresaProveedora nuevaEmpresa =
+                    empresaProveedorasService.saveEmpresaProveedora(request);
+
+            return new ResponseEntity<>(nuevaEmpresa, HttpStatus.CREATED);
+
+        } catch (Exception e) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "Error al crear");
+            error.put("mensaje", e.getMessage());
+
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateEmpresa(
+            @Valid @RequestBody UpdateEmpresaRequest request,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+
+            Map<String, String> errores = new HashMap<>();
+
+            result.getFieldErrors().forEach(error ->
+                    errores.put(error.getField(), error.getDefaultMessage())
+            );
+
+            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+
+            EmpresaProveedora empresaActualizada =
+                    empresaProveedorasService.updateEmpresaProveedora(request);
+
+            return new ResponseEntity<>(empresaActualizada, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "Error al actualizar");
+            error.put("mensaje", e.getMessage());
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEmpresa(@PathVariable Long id) {
+
+        try {
+
+            String resultado =
+                    empresaProveedorasService.deleteEmpresaProveedora(id);
+
+            Map<String, String> respuesta = new HashMap<>();
+
+            respuesta.put("mensaje", resultado);
+
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "Error al eliminar");
+            error.put("mensaje", e.getMessage());
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<?> getEmpresaPorEstado(
+            @PathVariable String estado) {
+
+        List<EmpresaProveedora> empresas =
+                empresaProveedorasService.getEmpresaPorEstado(estado);
+
+        if (empresas.isEmpty()) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "No encontrado");
+            error.put("mensaje",
+                    "No hay empresas proveedoras con estado: " + estado);
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(empresas, HttpStatus.OK);
+    }
+
+    @GetMapping("/rut/{rut}")
+    public ResponseEntity<?> getEmpresaPorRut(
+            @PathVariable String rut) {
+
+        List<EmpresaProveedora> empresas =
+                empresaProveedorasService.getEmpresaPorRut(rut);
+
+        if (empresas.isEmpty()) {
+
+            Map<String, String> error = new HashMap<>();
+
+            error.put("error", "No encontrado");
+            error.put("mensaje",
+                    "No hay empresas proveedoras con RUT: " + rut);
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(empresas, HttpStatus.OK);
+    }
+
+    @GetMapping("/total")
+    public ResponseEntity<Integer> getTotalEmpresas() {
+
+        return new ResponseEntity<>(
+                empresaProveedorasService.totalEmpresasProveedoras(),
+                HttpStatus.OK
+        );
+    }
+}

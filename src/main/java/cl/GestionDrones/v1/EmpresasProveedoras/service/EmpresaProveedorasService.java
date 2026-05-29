@@ -3,29 +3,29 @@ package cl.GestionDrones.v1.EmpresasProveedoras.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
-import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaProveedoraRequest;
-import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaProveedoraRequest;
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaRequest;
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.exception.ResourceNotFoundException;
-import cl.GestionDrones.v1.EmpresasProveedoras.mapper.EmpresaProveedoraMapper;
+import cl.GestionDrones.v1.EmpresasProveedoras.mapper.EmpresasProveedorasMapper;
 import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
-import cl.GestionDrones.v1.EmpresasProveedoras.repository.EmpresaProveedoraRepository;
+import cl.GestionDrones.v1.EmpresasProveedoras.repository.EmpresasProveedorasRepository;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmpresaProveedoraService {
+public class EmpresaProveedorasService {
 
     @Autowired
-    private EmpresaProveedoraRepository EmpresasProveedorasRepository;
+    private EmpresasProveedorasRepository EmpresasProveedorasRepository;
 
     public List<EmpresaProveedora> getEmpresasProveedoras() {
         return EmpresasProveedorasRepository.findAll();
     }
 
-    public EmpresaProveedora saveEmpresaProveedora(CreateEmpresaProveedoraRequest request) {
+    public EmpresaProveedora saveEmpresaProveedora(CreateEmpresaRequest request) {
 
         EmpresaProveedora nuevaEmpresa =
-                EmpresaProveedoraMapper.toEmpresa(request);
+                EmpresasProveedorasMapper.toEmpresa(request);
 
         return EmpresasProveedorasRepository.save(nuevaEmpresa);
     }
@@ -38,7 +38,7 @@ public class EmpresaProveedoraService {
     }
 
     public EmpresaProveedora updateEmpresaProveedora(
-            UpdateEmpresaProveedoraRequest request) {
+            UpdateEmpresaRequest request) {
 
         EmpresaProveedora empresaExistente =
                 EmpresasProveedorasRepository.findById(request.id())
@@ -47,7 +47,7 @@ public class EmpresaProveedoraService {
                                         "No se puede actualizar. No existe la empresa proveedora con el ID: "
                                                 + request.id()));
 
-        EmpresaProveedoraMapper.updateEntityFromDto(
+        EmpresasProveedorasMapper.updateEntityFromDto(
                 request,
                 empresaExistente
         );
