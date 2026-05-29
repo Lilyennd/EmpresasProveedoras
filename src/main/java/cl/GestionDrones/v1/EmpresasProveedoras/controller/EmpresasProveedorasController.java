@@ -18,7 +18,7 @@ import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
 import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresaProveedorasService;
 
 @RestController
-@RequestMapping("/api/empresas-proveedoras")
+@RequestMapping("/api/v1/empresas-proveedoras")
 public class EmpresasProveedorasController {
 
     @Autowired
