@@ -12,12 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cl.GestionDrones.v1.EmpresasProveedoras.client.AeronavesClient;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.AeronaveResponse;
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.BitacoraResponse;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
 import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresasProveedorasService;
+import cl.GestionDrones.v1.EmpresasProveedoras.webclient.AeronavesWebClient;
+import cl.GestionDrones.v1.EmpresasProveedoras.webclient.BitacorasWebClient;
 
 @RestController
 @RequestMapping("/api/v1/empresas-proveedoras")
@@ -201,27 +203,39 @@ public class EmpresasProveedorasController {
     }
 
     @Autowired
-    private AeronavesClient aeronavesClient;
+    private AeronavesWebClient aeronavesWebClient;
 
-    @GetMapping("/aeronaves/disponibles")
-    public ResponseEntity<?> getAeronavesDisponibles() {
-
-    try {
+    @GetMapping("/aeronaves/seguros-por-vencer")
+    public ResponseEntity<?> getAeronavesConSeguroPorVencer() {
 
         List<AeronaveResponse> aeronaves =
-                aeronavesClient.obtenerAeronavesDisponibles();
+                aeronavesWebClient.obtenerSegurosPorVencer();
+
+        if (aeronaves == null || aeronaves.isEmpty()) {
+
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Sin resultados");
+            error.put("mensaje",
+                    "No existen aeronaves con seguros que venzan en los próximos 10 días");
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
 
         return ResponseEntity.ok(aeronaves);
 
-    } catch (Exception e) {
-
-        Map<String, String> error = new HashMap<>();
-
-        error.put("error", "Error al consultar el microservicio Aeronaves");
-        error.put("mensaje", e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(error);
+        
     }
-}
+
+    @Autowired
+    private BitacorasWebClient bitacorasWebClient;
+
+    @GetMapping("/bitacoras")
+    public ResponseEntity<?> listarBitacoras() {
+
+        Map<String, Object> respuesta =
+                bitacorasWebClient.obtenerTodasLasBitacoras();
+
+        return ResponseEntity.ok(respuesta);
+    }
+
 }

@@ -1,4 +1,4 @@
-package cl.GestionDrones.v1.EmpresasProveedoras.client;
+package cl.GestionDrones.v1.EmpresasProveedoras.webclient;
 
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.AeronaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
