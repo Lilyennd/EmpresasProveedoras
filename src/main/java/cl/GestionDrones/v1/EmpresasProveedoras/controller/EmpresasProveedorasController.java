@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cl.GestionDrones.v1.EmpresasProveedoras.client.AeronavesClient;
+import cl.GestionDrones.v1.EmpresasProveedoras.dto.AeronaveResponse;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.CreateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.UpdateEmpresaRequest;
 import cl.GestionDrones.v1.EmpresasProveedoras.model.EmpresaProveedora;
@@ -197,4 +199,29 @@ public class EmpresasProveedorasController {
                 HttpStatus.OK
         );
     }
+
+    @Autowired
+    private AeronavesClient aeronavesClient;
+
+    @GetMapping("/aeronaves/disponibles")
+    public ResponseEntity<?> getAeronavesDisponibles() {
+
+    try {
+
+        List<AeronaveResponse> aeronaves =
+                aeronavesClient.obtenerAeronavesDisponibles();
+
+        return ResponseEntity.ok(aeronaves);
+
+    } catch (Exception e) {
+
+        Map<String, String> error = new HashMap<>();
+
+        error.put("error", "Error al consultar el microservicio Aeronaves");
+        error.put("mensaje", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(error);
+    }
+}
 }
