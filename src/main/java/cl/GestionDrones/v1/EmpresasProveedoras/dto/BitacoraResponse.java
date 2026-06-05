@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 
 public record BitacoraResponse(
         Long id,
-        String accion,
-        String descripcion,
-        LocalDateTime fecha
-) {
-}
+        Long idPlanVuelo,
+        Integer duracionRealMinutos,
+        String estadoFinal,
+        String observaciones,
+        String firmaDigital,
+        LocalDateTime fechaCierre
+) {}
