@@ -1,9 +1,7 @@
 package cl.GestionDrones.v1.EmpresasProveedoras.client;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,20 +20,14 @@ public class PilotosWebClient {
 
     public List<PilotoResponse> obtenerCertificadosPorVencer() {
         try {
-            List<PilotoResponse> todos = webClient.get()
-                    .uri("")
+            List<PilotoResponse> filtrados = webClient.get()
+                    .uri("/por-vencer")
                     .retrieve()
                     .bodyToFlux(PilotoResponse.class)
                     .collectList()
                     .block();
 
-            if (todos == null) return Collections.emptyList();
-
-            LocalDate limite = LocalDate.now().plusDays(30);
-            return todos.stream()
-                    .filter(p -> p.fechaVencimientoCertificacion() != null
-                            && !p.fechaVencimientoCertificacion().isAfter(limite))
-                    .collect(Collectors.toList());
+            return filtrados != null ? filtrados : Collections.emptyList();
 
         } catch (Exception e) {
             System.out.println("Error al obtener pilotos: " + e.getMessage());

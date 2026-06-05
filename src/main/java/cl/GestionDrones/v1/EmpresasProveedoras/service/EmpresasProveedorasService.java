@@ -53,11 +53,9 @@ public class EmpresasProveedorasService {
                     "No se encontró la empresa proveedora con el ID: " + id));
     }
 
-    public EmpresaProveedora updateEmpresaProveedora(UpdateEmpresaRequest request) {
-        EmpresaProveedora empresaExistente = empresasProveedorasRepository
-                .findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                    "No se puede actualizar. No existe la empresa proveedora con el ID: " + request.id()));
+    public EmpresaProveedora updateEmpresa(Long id, UpdateEmpresaRequest request) {
+        EmpresaProveedora empresaExistente = empresasProveedorasRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la empresa con ID: " + id));
 
         EmpresasProveedorasMapper.updateEntityFromDto(request, empresaExistente);
         return empresasProveedorasRepository.save(empresaExistente);

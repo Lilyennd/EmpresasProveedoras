@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.AeronaveResponse;
 import cl.GestionDrones.v1.EmpresasProveedoras.dto.BitacoraResponse;
@@ -70,27 +72,33 @@ public class EmpresasProveedorasController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> updateEmpresa(
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> actualizar(
+            @PathVariable Long id,
             @Valid @RequestBody UpdateEmpresaRequest request,
             BindingResult result) {
 
         if (result.hasErrors()) {
-            Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(error ->
-                    errores.put(error.getField(), error.getDefaultMessage()));
-            return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
+            return manejarErrores(result);
         }
 
-        try {
-            return new ResponseEntity<>(
-                empresaProveedorasService.updateEmpresaProveedora(request), HttpStatus.OK);
-        } catch (Exception e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Error al actualizar");
-            error.put("mensaje", e.getMessage());
-            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-        }
+        var empresaActualizada = empresaProveedorasService.updateEmpresa(id, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("mensaje", "Empresa proveedora actualizada correctamente");
+        response.put("datos", empresaActualizada);
+
+        return ResponseEntity.ok(response);
+    }
+
+    private ResponseEntity<Map<String, Object>> manejarErrores(BindingResult result) {
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("status", HttpStatus.BAD_REQUEST.value());
+        errors.put("errors", result.getFieldErrors().stream()
+            .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)));
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}")
@@ -155,17 +163,6 @@ public class EmpresasProveedorasController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
         return ResponseEntity.ok(pilotos);
-    }
-
-    @GetMapping("/bitacoras")
-    public ResponseEntity<?> listarBitacoras() {
-        List<BitacoraResponse> bitacoras = empresaProveedorasService.obtenerBitacoras();
-        if (bitacoras.isEmpty()) {
-            Map<String, String> error = new HashMap<>();
-            error.put("mensaje", "No hay bitácoras registradas");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        }
-        return ResponseEntity.ok(bitacoras);
     }
 
 }

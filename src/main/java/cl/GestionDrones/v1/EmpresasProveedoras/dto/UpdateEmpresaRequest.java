@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public record UpdateEmpresaRequest(
 
-    @NotNull(message = "El ID de la empresa proveedora es obligatorio para actualizar")
-    Long id,
-
     @NotBlank(message = "El RUT es obligatorio")
     @Size(max = 15, message = "El RUT no puede superar los 15 caracteres")
     String rut,
