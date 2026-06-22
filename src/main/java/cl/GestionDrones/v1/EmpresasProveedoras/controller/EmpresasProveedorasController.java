@@ -24,6 +24,7 @@ import cl.GestionDrones.v1.EmpresasProveedoras.service.EmpresasProveedorasServic
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -71,6 +72,18 @@ public class EmpresasProveedorasController {
     }
 
     @Operation(summary = "Crear una nueva empresa proveedora", description = "Registra una nueva empresa proveedora en el sistema validando sus datos de entrada")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON de la nueva empresa proveedora a registrar",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = CreateEmpresaRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Nueva Empresa Proveedora",
+                value = "{\n  \"rut\": \"77345678-K\",\n  \"razonSocial\": \"Proveedora de Sistemas Autónomos SpA\",\n  \"cantidadAeronaves\": 15,\n  \"cantidadPilotos\": 8,\n  \"contactoEmail\": \"logistica@sistemasautonomos.cl\",\n  \"estado\": \"ACTIVO\"\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Empresa creada exitosamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = EmpresaProveedora.class))),
@@ -78,7 +91,6 @@ public class EmpresasProveedorasController {
     })
     @PostMapping
     public ResponseEntity<?> createEmpresa(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON de la nueva empresa proveedora a registrar", required = true)
             @Valid @RequestBody CreateEmpresaRequest request,
             BindingResult result) {
 
@@ -101,6 +113,18 @@ public class EmpresasProveedorasController {
     }
 
     @Operation(summary = "Actualizar una empresa proveedora", description = "Modifica los datos de una empresa proveedora existente basándose en su ID")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON con los nuevos campos de la empresa",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = UpdateEmpresaRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Actualización de Empresa Proveedora",
+                value = "{\n  \"rut\": \"77345678-K\",\n  \"razonSocial\": \"Sistemas Autónomos y Drones Internacionales SpA\",\n  \"cantidadAeronaves\": 18,\n  \"cantidadPilotos\": 10,\n  \"contactoEmail\": \"operaciones@sistemasautonomos.cl\",\n  \"estado\": \"ACTIVO\"\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Empresa proveedora actualizada correctamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = EmpresaProveedora.class))),
@@ -110,7 +134,6 @@ public class EmpresasProveedorasController {
     public ResponseEntity<Map<String, Object>> actualizar(
             @Parameter(description = "ID de la empresa proveedora que se desea actualizar", required = true, example = "1")
             @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON con los nuevos campos de la empresa", required = true)
             @Valid @RequestBody UpdateEmpresaRequest request,
             BindingResult result) {
 
